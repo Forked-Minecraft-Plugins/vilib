@@ -1,7 +1,6 @@
 package dev.efnilite.vilib.schematic.io;
 
-import dev.efnilite.ip.IP;
-import dev.efnilite.ip.schematic.Schematic;
+import dev.efnilite.vilib.ViMain;
 import dev.efnilite.vilib.util.Colls;
 import org.bukkit.Bukkit;
 import org.bukkit.block.data.BlockData;
@@ -20,7 +19,7 @@ public class SchematicReader {
 
     /**
      * @param file The file.
-     * @return A new {@link Schematic} instance based on the read blocks.
+     * @return A new {@link dev.efnilite.vilib.schematic.Schematic} instance based on the read blocks.
      */
     @SuppressWarnings("unchecked")
     public Map<Vector, BlockData> read(File file) {
@@ -49,7 +48,7 @@ public class SchematicReader {
             // create final map by parse Map<String, Object> -> Vector and applying possible State
             return Colls.thread(offsets).mapkv(this::fromString, paletteRef::get).get();
         } catch (IOException | ClassNotFoundException ex) {
-            IP.logging().stack("Error while trying to read schematic %s".formatted(file), ex);
+            ViMain.logging().stack("Error while trying to read schematic %s".formatted(file), ex);
         }
 
         return null;
