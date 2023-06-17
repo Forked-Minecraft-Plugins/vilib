@@ -1,5 +1,6 @@
 package dev.efnilite.vilib.util;
 
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.meta.SkullMeta;
 
@@ -24,11 +25,12 @@ public class SkullSetter {
         }
     }
 
-    public static void setPlayerHead(Player player, SkullMeta meta) {
-        if (!isPaper) {
+    public static void setPlayerHead(OfflinePlayer player, SkullMeta meta) {
+        if (!isPaper) { // ew
             meta.setOwningPlayer(player);
             return;
         }
+
         try {
             Object playerProfile = getPlayerProfileMethod.invoke(player);
             boolean hasTexture = (boolean) hasTexturesMethod.invoke(playerProfile);

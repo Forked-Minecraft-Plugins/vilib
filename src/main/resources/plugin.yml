@@ -1,6 +1,6 @@
 name: vilib
 description: "Development library."
-api-version: 1.19
+api-version: 1.16
 main: dev.efnilite.vilib.ViMain
 version: ${project.version}
 author: Efnilite
