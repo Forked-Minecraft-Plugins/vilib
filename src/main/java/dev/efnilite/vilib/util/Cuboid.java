@@ -1,0 +1,99 @@
+package dev.efnilite.vilib.util;
+
+import dev.efnilite.vilib.ViMain;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.block.data.BlockData;
+import org.bukkit.block.data.type.Fence;
+import org.bukkit.block.data.type.Wall;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.*;
+import java.util.function.Consumer;
+
+/**
+ * Asynchronously gets the {@link Block} instances between the two specified {@link Location} instances.
+ * Executes the provided {@link Consumer} with the gathered block list.
+ */
+public class Cuboid {
+
+    /**
+     * The amount of changes per tick.
+     */
+    public static final int CHANGES_PER_TICK = 2500;
+
+    /**
+     * Sets blocks in <code>blocks</code> to their respective {@link BlockData}.
+     * Performs <code>onComplete</code> when block setting has finished.
+     *
+     * @param blocks     The block map.
+     * @param onComplete What to do on completion.
+     */
+    public static void set(@NotNull Map<Block, BlockData> blocks, @Nullable Runnable onComplete) {
+        Queue<Block> queue = new LinkedList<>(blocks.keySet());
+
+        Task.create(ViMain.getPlugin()).repeat(1).execute(new BukkitRunnable() {
+            @Override
+            public void run() {
+                for (int i = 0; i < CHANGES_PER_TICK; i++) {
+                    Block block = queue.poll();
+
+                    if (block == null) {
+                        // no blocks left, so cancel task
+                        cancel();
+
+                        if (onComplete != null) {
+                            onComplete.run();
+                        }
+
+                        return;
+                    }
+
+                    setBlock(block, blocks.get(block));
+                }
+            }
+        }).run();
+    }
+
+    private static void setBlock(Block block, BlockData data) {
+        block.setBlockData(data, data instanceof Fence || data instanceof Wall);
+    }
+
+    /**
+     * Returns all blocks between the provided locations.
+     *
+     * @param pos1       The first location
+     * @param pos2       The second location
+     * @param onComplete A {@link Consumer} with the list of gathered blocks.
+     */
+    public static void get(@NotNull Location pos1, @NotNull Location pos2, @NotNull Consumer<List<Block>> onComplete) {
+        Task.create(ViMain.getPlugin()).async().execute(() -> {
+            List<Block> blocks = new ArrayList<>();
+            Location max = Locations.max(pos1, pos2);
+            Location min = Locations.min(pos1, pos2);
+            Location location = max.clone();
+
+            location.setWorld(pos1.getWorld() == null ? pos2.getWorld() : pos1.getWorld());
+            for (int x = min.getBlockX(); x <= max.getBlockX(); x++) {
+                for (int y = min.getBlockY(); y <= max.getBlockY(); y++) {
+                    for (int z = min.getBlockZ(); z <= max.getBlockZ(); z++) {
+                        location.setX(x);
+                        location.setY(y);
+                        location.setZ(z);
+
+                        if (location.getBlock().getType() == Material.AIR) {
+                            continue;
+                        }
+
+                        blocks.add(location.getBlock());
+                    }
+                }
+            }
+
+            onComplete.accept(blocks);
+        }).run();
+    }
+}
