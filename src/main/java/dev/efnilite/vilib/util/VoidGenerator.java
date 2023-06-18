@@ -53,6 +53,15 @@ public abstract class VoidGenerator extends ChunkGenerator {
         return false;
     }
 
+    @NotNull
+    public static VoidGenerator getGenerator() {
+        if (Version.getVersion().major > 16) {
+            return new VoidGenerator_v1_17();
+        } else {
+            return new VoidGenerator_v1_16();
+        }
+    }
+
     /**
      * Returns the active void generator plugin
      *
