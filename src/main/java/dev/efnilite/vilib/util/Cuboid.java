@@ -67,33 +67,41 @@ public class Cuboid {
      *
      * @param pos1       The first location
      * @param pos2       The second location
-     * @param onComplete A {@link Consumer} with the list of gathered blocks.
      */
-    public static void get(@NotNull Location pos1, @NotNull Location pos2, @NotNull Consumer<List<Block>> onComplete) {
-        Task.create(ViMain.getPlugin()).async().execute(() -> {
-            List<Block> blocks = new ArrayList<>();
-            Location max = Locations.max(pos1, pos2);
-            Location min = Locations.min(pos1, pos2);
-            Location location = max.clone();
+    public static List<Block> get(@NotNull Location pos1, @NotNull Location pos2) {
+        List<Block> blocks = new ArrayList<>();
+        Location max = Locations.max(pos1, pos2);
+        Location min = Locations.min(pos1, pos2);
+        Location location = max.clone();
 
-            location.setWorld(pos1.getWorld() == null ? pos2.getWorld() : pos1.getWorld());
-            for (int x = min.getBlockX(); x <= max.getBlockX(); x++) {
-                for (int y = min.getBlockY(); y <= max.getBlockY(); y++) {
-                    for (int z = min.getBlockZ(); z <= max.getBlockZ(); z++) {
-                        location.setX(x);
-                        location.setY(y);
-                        location.setZ(z);
+        location.setWorld(pos1.getWorld() == null ? pos2.getWorld() : pos1.getWorld());
+        for (int x = min.getBlockX(); x <= max.getBlockX(); x++) {
+            for (int y = min.getBlockY(); y <= max.getBlockY(); y++) {
+                for (int z = min.getBlockZ(); z <= max.getBlockZ(); z++) {
+                    location.setX(x);
+                    location.setY(y);
+                    location.setZ(z);
 
-                        if (location.getBlock().getType() == Material.AIR) {
-                            continue;
-                        }
-
-                        blocks.add(location.getBlock());
+                    if (location.getBlock().getType() == Material.AIR) {
+                        continue;
                     }
+
+                    blocks.add(location.getBlock());
                 }
             }
+        }
 
-            onComplete.accept(blocks);
-        }).run();
+        return blocks;
+    }
+
+    /**
+     * Returns all blocks between the provided locations asynchronously.
+     *
+     * @param pos1       The first location
+     * @param pos2       The second location
+     * @param onComplete A {@link Consumer} with the list of gathered blocks.
+     */
+    public static void getAsync(@NotNull Location pos1, @NotNull Location pos2, @NotNull Consumer<List<Block>> onComplete) {
+        Task.create(ViMain.getPlugin()).async().execute(() -> onComplete.accept(get(pos1, pos2))).run();
     }
 }
