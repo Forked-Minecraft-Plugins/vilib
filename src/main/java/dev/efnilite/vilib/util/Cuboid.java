@@ -68,7 +68,7 @@ public class Cuboid {
      * @param pos1       The first location
      * @param pos2       The second location
      */
-    public static List<Block> get(@NotNull Location pos1, @NotNull Location pos2) {
+    public static List<Block> get(@NotNull Location pos1, @NotNull Location pos2, boolean ignoreAir) {
         List<Block> blocks = new ArrayList<>();
         Location max = Locations.max(pos1, pos2);
         Location min = Locations.min(pos1, pos2);
@@ -82,8 +82,10 @@ public class Cuboid {
                     location.setY(y);
                     location.setZ(z);
 
-                    if (location.getBlock().getType() == Material.AIR) {
-                        continue;
+                    if (ignoreAir) {
+                        if (location.getBlock().getType() == Material.AIR) {
+                            continue;
+                        }
                     }
 
                     blocks.add(location.getBlock());
@@ -101,7 +103,7 @@ public class Cuboid {
      * @param pos2       The second location
      * @param onComplete A {@link Consumer} with the list of gathered blocks.
      */
-    public static void getAsync(@NotNull Location pos1, @NotNull Location pos2, @NotNull Consumer<List<Block>> onComplete) {
-        Task.create(ViMain.getPlugin()).async().execute(() -> onComplete.accept(get(pos1, pos2))).run();
+    public static void getAsync(@NotNull Location pos1, @NotNull Location pos2, boolean ignoreAir, @NotNull Consumer<List<Block>> onComplete) {
+        Task.create(ViMain.getPlugin()).async().execute(() -> onComplete.accept(get(pos1, pos2, ignoreAir))).run();
     }
 }
