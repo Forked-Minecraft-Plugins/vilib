@@ -1,6 +1,5 @@
 package dev.efnilite.vilib.schematic;
 
-import dev.efnilite.vilib.ViMain;
 import dev.efnilite.vilib.schematic.io.SchematicPaster;
 import dev.efnilite.vilib.schematic.io.SchematicReader;
 import dev.efnilite.vilib.schematic.io.SchematicWriter;
@@ -8,10 +7,12 @@ import dev.efnilite.vilib.util.Task;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -42,21 +43,23 @@ public class Schematic {
     }
 
     private final File file;
-    private Map<Vector, BlockData> vectorBlockMap;
+    private final Map<Vector, BlockData> vectorBlockMap;
 
     /**
      * Constructor.
      *
      * @param file The file.
      */
-    public Schematic(@NotNull File file) {
+    public Schematic(@NotNull File file) throws ExecutionException, InterruptedException {
         this.file = file;
 
-        try {
-            this.vectorBlockMap = CompletableFuture.supplyAsync(() -> new SchematicReader().read(file)).get();
-        } catch (InterruptedException | ExecutionException ex) {
-            ViMain.logging().stack("Error while trying to read schematic %s".formatted(file), ex);
-        }
+        this.vectorBlockMap = CompletableFuture.supplyAsync(() -> {
+            try {
+                return new SchematicReader().read(file);
+            } catch (IOException | ClassNotFoundException ex) {
+                throw new RuntimeException(ex);
+            }
+        }).get();
     }
 
     /**
@@ -114,22 +117,22 @@ public class Schematic {
     public static class Builder {
 
         /**
-         * Loads a schematic.
+         * Loads a schematic asynchronously.
          *
          * @param file The file.
          * @return A new {@link Schematic} instance.
          */
-        public Schematic load(File file) {
+        public Schematic load(File file) throws ExecutionException, InterruptedException {
             return new Schematic(file);
         }
 
         /**
-         * Loads a schematic.
+         * Loads a schematic asynchronously.
          *
          * @param file The file.
          * @return A new {@link Schematic} instance.
          */
-        public Schematic load(String file) {
+        public Schematic load(String file) throws ExecutionException, InterruptedException {
             return new Schematic(new File(file));
         }
 
@@ -140,8 +143,8 @@ public class Schematic {
          * @param pos1 The first position.
          * @param pos2 The second position.
          */
-        public void save(String file, Location pos1, Location pos2) {
-            save(new File(file), pos1, pos2);
+        public void save(String file, Location pos1, Location pos2, Plugin plugin) {
+            save(new File(file), pos1, pos2, plugin);
         }
 
         /**
@@ -151,8 +154,8 @@ public class Schematic {
          * @param pos1 The first position.
          * @param pos2 The second position.
          */
-        public void save(File file, Location pos1, Location pos2) {
-            Task.create(ViMain.getPlugin()).async().execute(() -> new SchematicWriter().save(file, pos1, pos2)).run();
+        public void save(File file, Location pos1, Location pos2, Plugin plugin) {
+            Task.create(plugin).async().execute(() -> new SchematicWriter().save(file, pos1, pos2, plugin)).run();
         }
     }
 }

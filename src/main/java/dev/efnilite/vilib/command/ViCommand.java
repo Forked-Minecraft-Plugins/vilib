@@ -1,6 +1,5 @@
 package dev.efnilite.vilib.command;
 
-import dev.efnilite.vilib.ViMain;
 import dev.efnilite.vilib.util.Version;
 import org.bukkit.Bukkit;
 import org.bukkit.command.*;
@@ -41,9 +40,6 @@ public abstract class ViCommand implements CommandExecutor, TabCompleter {
             field.setAccessible(true);
             return (SimpleCommandMap) field.get(Bukkit.getServer());
         } catch (NoSuchFieldException | IllegalAccessException ex) {
-            ex.printStackTrace();
-            ViMain.logging().error("Error while trying to access the command map.");
-            ViMain.logging().error("Commands will not show up on completion.");
             return null;
         }
     }
@@ -55,6 +51,7 @@ public abstract class ViCommand implements CommandExecutor, TabCompleter {
      * @param command The command instance
      * @return the command that was added
      */
+    @SuppressWarnings("unchecked")
     public static Command add(@NotNull String alias, @NotNull Command command) {
         try {
             Field field = SimpleCommandMap.class.getDeclaredField("knownCommands");
@@ -67,13 +64,7 @@ public abstract class ViCommand implements CommandExecutor, TabCompleter {
             field.set(map, knownCommands);
 
             return knownCommands.put(alias, command);
-        } catch (NoSuchFieldException ex) {
-            ViMain.logging().stack("knownCommands field not found for registry", "update your server or switch to a supported server platform", ex);
-            return null;
-        } catch (Throwable throwable) {
-            throwable.printStackTrace();
-            ViMain.logging().error("There was an error while trying to register your command to the Command Map");
-            ViMain.logging().error("It might not show up in-game in the auto-complete, but it does work.");
+        } catch (NoSuchFieldException | IllegalAccessException ex) {
             return null;
         }
     }

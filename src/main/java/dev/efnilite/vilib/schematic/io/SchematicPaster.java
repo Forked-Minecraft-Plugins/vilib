@@ -1,6 +1,5 @@
 package dev.efnilite.vilib.schematic.io;
 
-import dev.efnilite.vilib.ViMain;
 import dev.efnilite.vilib.util.Colls;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -32,8 +31,8 @@ public class SchematicPaster {
      */
     public List<Block> paste(Location location, Map<Vector, BlockData> vectorDataMap) {
         return paste(() -> Colls.thread(vectorDataMap)
-            .mapk((k, v) -> location.clone().add(k).getBlock())
-            .get());
+                .mapk((k, v) -> location.clone().add(k).getBlock())
+                .get());
     }
 
     /**
@@ -47,28 +46,28 @@ public class SchematicPaster {
      */
     public List<Block> paste(Location location, double rotation, Map<Vector, BlockData> vectorDataMap) {
         return paste(() -> Colls.thread(vectorDataMap)
-            .mapkv((vector) -> location.clone().add(round(vector.rotateAroundY(rotation))).getBlock(),
-                (data) -> {
-                    if (data instanceof Directional directional) {
-                        directional.setFacing(getClosest(directional.getFacing().getDirection(), rotation, directional.getFaces()));
-                        return directional;
-                    }
+                .mapkv((vector) -> location.clone().add(round(vector.rotateAroundY(rotation))).getBlock(),
+                        (data) -> {
+                            if (data instanceof Directional directional) {
+                                directional.setFacing(getClosest(directional.getFacing().getDirection(), rotation, directional.getFaces()));
+                                return directional;
+                            }
 
-                    // todo add
-                    // - Orientatable
-                    // why are there so many?
+                            // todo add
+                            // - Orientatable
+                            // why are there so many?
 
-                    return data;
-                })
-            .get());
+                            return data;
+                        })
+                .get());
     }
 
     private BlockFace getClosest(Vector direction, double rotation, Set<BlockFace> allowedFaces) {
         Vector rotated = round(direction.clone().rotateAroundY(rotation));
 
         return allowedFaces.stream()
-            .min(Comparator.comparingDouble(f -> f.getDirection().angle(rotated)))
-            .orElseThrow();
+                .min(Comparator.comparingDouble(f -> f.getDirection().angle(rotated)))
+                .orElseThrow();
     }
 
     // rounds a vector to avoid small discrepancies like having an offset of E-16
@@ -79,8 +78,8 @@ public class SchematicPaster {
         double epsilon = Vector.getEpsilon();
 
         return new Vector(Math.abs(x) >= epsilon ? x : 0,
-            Math.abs(y) >= epsilon ? y : 0,
-            Math.abs(z) >= epsilon ? z : 0);
+                Math.abs(y) >= epsilon ? y : 0,
+                Math.abs(z) >= epsilon ? z : 0);
     }
 
     private List<Block> paste(Supplier<Map<Block, BlockData>> blocksGetter) {
@@ -91,8 +90,6 @@ public class SchematicPaster {
 
             return new ArrayList<>(blocks.keySet());
         } catch (InterruptedException | ExecutionException ex) {
-            ViMain.logging().stack("Error while trying to get blocks of schematic", ex);
-
             return Collections.emptyList();
         }
     }

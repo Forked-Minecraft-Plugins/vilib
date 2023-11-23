@@ -1,12 +1,12 @@
 package dev.efnilite.vilib.serialization;
 
 import com.google.gson.annotations.Expose;
-import dev.efnilite.vilib.ViMain;
 import dev.efnilite.vilib.ViPlugin;
 import dev.efnilite.vilib.util.Task;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
@@ -68,8 +68,8 @@ public class PlayerInventory {
      * @param inventory  The inventory
      * @param onComplete What to do on complete. Can be null.
      */
-    public static void save(File file, PlayerInventory inventory, @Nullable Runnable onComplete) {
-        Task.create(ViMain.getPlugin()).async().execute(() -> {
+    public static void save(File file, PlayerInventory inventory, Plugin plugin, @Nullable Runnable onComplete) {
+        Task.create(plugin).async().execute(() -> {
             try {
                 if (!file.exists()) {
                     file.createNewFile();
@@ -88,7 +88,7 @@ public class PlayerInventory {
                 writer.flush();
                 writer.close();
             } catch (IOException ex) {
-                ViMain.logging().stack("Error while saving inventory", ex);
+                ex.printStackTrace();
             }
         }).run();
     }
@@ -99,8 +99,8 @@ public class PlayerInventory {
      * @param file   The file
      * @param onRead Consumer containing the gathered PlayerInventory. Can be null.
      */
-    public static void read(File file, @Nullable Consumer<@Nullable PlayerInventory> onRead) {
-        Task.create(ViMain.getPlugin()).async().execute(() -> {
+    public static void read(File file, Plugin plugin, @Nullable Consumer<@Nullable PlayerInventory> onRead) {
+        Task.create(plugin).async().execute(() -> {
             try {
                 if (!file.exists()) {
                     if (onRead != null) {
@@ -117,7 +117,6 @@ public class PlayerInventory {
 
                 reader.close();
             } catch (IOException ex) {
-                ViMain.logging().stack("Error while reading inventory", ex);
                 if (onRead != null) {
                     onRead.accept(null);
                 }

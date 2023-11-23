@@ -1,12 +1,12 @@
 package dev.efnilite.vilib.util;
 
-import dev.efnilite.vilib.ViMain;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.type.Fence;
 import org.bukkit.block.data.type.Wall;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -32,10 +32,10 @@ public class Cuboid {
      * @param blocks     The block map.
      * @param onComplete What to do on completion.
      */
-    public static void set(@NotNull Map<Block, BlockData> blocks, @Nullable Runnable onComplete) {
+    public static void set(@NotNull Map<Block, BlockData> blocks, Plugin plugin, @Nullable Runnable onComplete) {
         Queue<Block> queue = new LinkedList<>(blocks.keySet());
 
-        Task.create(ViMain.getPlugin()).repeat(1).execute(new BukkitRunnable() {
+        Task.create(plugin).repeat(1).execute(new BukkitRunnable() {
             @Override
             public void run() {
                 for (int i = 0; i < CHANGES_PER_TICK; i++) {
@@ -65,8 +65,8 @@ public class Cuboid {
     /**
      * Returns all blocks between the provided locations.
      *
-     * @param pos1       The first location
-     * @param pos2       The second location
+     * @param pos1 The first location
+     * @param pos2 The second location
      */
     public static List<Block> get(@NotNull Location pos1, @NotNull Location pos2, boolean ignoreAir) {
         List<Block> blocks = new ArrayList<>();
@@ -103,7 +103,8 @@ public class Cuboid {
      * @param pos2       The second location
      * @param onComplete A {@link Consumer} with the list of gathered blocks.
      */
-    public static void getAsync(@NotNull Location pos1, @NotNull Location pos2, boolean ignoreAir, @NotNull Consumer<List<Block>> onComplete) {
-        Task.create(ViMain.getPlugin()).async().execute(() -> onComplete.accept(get(pos1, pos2, ignoreAir))).run();
+    public static void getAsync(@NotNull Location pos1, @NotNull Location pos2, boolean ignoreAir,
+                                Plugin plugin, @NotNull Consumer<List<Block>> onComplete) {
+        Task.create(plugin).async().execute(() -> onComplete.accept(get(pos1, pos2, ignoreAir))).run();
     }
 }

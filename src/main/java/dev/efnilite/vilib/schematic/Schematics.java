@@ -1,19 +1,18 @@
 package dev.efnilite.vilib.schematic;
 
-import dev.efnilite.vilib.ViMain;
-import dev.efnilite.vilib.util.Time;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 public class Schematics {
 
     private static final Map<Plugin, Map<String, Schematic>> cache = new HashMap<>();
 
-    public static void addFromFiles(@NotNull Plugin plugin, @NotNull File... files) {
+    public static void addFromFiles(@NotNull Plugin plugin, @NotNull File... files) throws ExecutionException, InterruptedException {
         Map<String, Schematic> current = cache.getOrDefault(plugin, new HashMap<>());
 
         for (File file : files) {

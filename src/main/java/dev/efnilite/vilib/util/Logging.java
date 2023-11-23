@@ -1,6 +1,5 @@
 package dev.efnilite.vilib.util;
 
-import dev.efnilite.vilib.ViMain;
 import dev.efnilite.vilib.ViPlugin;
 import org.jetbrains.annotations.Nullable;
 
@@ -70,7 +69,6 @@ public class Logging {
         error("##");
         error("## Version information:");
         error("##\tPlugin Version: %s".formatted(plugin.getDescription().getVersion()));
-        error("##\tvilib Version: %s".formatted(ViMain.getPlugin().getDescription().getVersion()));
         error("##\tMinecraft: %s".formatted(Version.getVersion().name().replaceAll("_", ".")));
         error("##");
     }

@@ -1,11 +1,11 @@
 package dev.efnilite.vilib.schematic.io;
 
-import dev.efnilite.vilib.ViMain;
 import dev.efnilite.vilib.schematic.Schematic;
 import dev.efnilite.vilib.util.Locations;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.plugin.Plugin;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -28,7 +28,7 @@ public class SchematicWriter {
      * @param pos1 The first position.
      * @param pos2 The second position.
      */
-    public void save(File file, Location pos1, Location pos2) {
+    public void save(File file, Location pos1, Location pos2, Plugin plugin) {
         List<Block> blocks = getBlocks(Locations.min(pos1, pos2), Locations.max(pos1, pos2));
 
         Map<String, Integer> palette = getPalette(blocks);
@@ -41,7 +41,7 @@ public class SchematicWriter {
             stream.writeObject(offsetData);
             stream.flush();
         } catch (IOException ex) {
-            ViMain.logging().stack("Error while trying to save schematic %s".formatted(file), ex);
+            ex.printStackTrace();
         }
     }
 

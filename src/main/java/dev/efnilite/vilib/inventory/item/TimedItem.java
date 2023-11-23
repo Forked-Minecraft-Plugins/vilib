@@ -1,6 +1,5 @@
 package dev.efnilite.vilib.inventory.item;
 
-import dev.efnilite.vilib.ViMain;
 import dev.efnilite.vilib.inventory.Menu;
 import dev.efnilite.vilib.inventory.MenuClickEvent;
 import dev.efnilite.vilib.util.Task;
@@ -10,6 +9,7 @@ import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
 /**
@@ -21,11 +21,12 @@ public class TimedItem extends MenuItem {
     private int timeStay;
     private Task task;
     private MenuItem revertTo;
+    private final Plugin plugin;
     private final Player player;
     private final MenuItem item;
     private final MenuClickEvent event;
 
-    public TimedItem(MenuItem item, MenuClickEvent event) {
+    public TimedItem(MenuItem item, MenuClickEvent event, Plugin plugin) {
         this.item = item;
         this.revertTo = event.menu().getItem(event.slot());
         if (revertTo == null) {
@@ -33,6 +34,7 @@ public class TimedItem extends MenuItem {
         }
         this.player = event.getPlayer();
         this.event = event;
+        this.plugin = plugin;
     }
 
     /**
@@ -62,7 +64,7 @@ public class TimedItem extends MenuItem {
             }
         };
 
-        task = Task.create(ViMain.getPlugin()).delay(timeStay).execute(runnable);
+        task = Task.create(plugin).delay(timeStay).execute(runnable);
         task.run();
 
         return item.build();

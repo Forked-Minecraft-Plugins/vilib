@@ -1,6 +1,5 @@
 package dev.efnilite.vilib.inventory;
 
-import dev.efnilite.vilib.ViMain;
 import dev.efnilite.vilib.event.EventWatcher;
 import dev.efnilite.vilib.inventory.animation.MenuAnimation;
 import dev.efnilite.vilib.inventory.item.Item;
@@ -15,6 +14,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -33,18 +34,19 @@ public class Menu implements EventWatcher {
     private final static Map<UUID, UUID> openMenus = new HashMap<>();
     private final static List<Menu> disabledMenus = new ArrayList<>();
 
-    /*
-     * Prevents big boy memory usage by unregistering unused menus
-     */
-    static {
-        Task.create(ViMain.getPlugin()).repeat(5 * 20).execute(() -> {
-            if (openMenus.keySet().size() == 0) {
+    private static Plugin plugin;
+
+    public static void init(Plugin pl) {
+        Task.create(pl).repeat(5 * 20).execute(() -> {
+            if (openMenus.keySet().isEmpty()) {
                 for (Menu menu : disabledMenus) {
                     menu.unregisterAll();
                 }
                 disabledMenus.clear();
             }
         }).run();
+
+        plugin = pl;
     }
 
     protected final int rows;
@@ -194,7 +196,7 @@ public class Menu implements EventWatcher {
             throw new IllegalArgumentException("Tick interval must be above 0");
         }
 
-        Task.create(ViMain.getPlugin())
+        Task.create(plugin)
                 .repeat(tickInterval)
                 .execute(new BukkitRunnable() {
                     @Override
@@ -277,10 +279,10 @@ public class Menu implements EventWatcher {
             // no animation means just setting it normally
             items.keySet().forEach(slot -> inventory.setItem(slot, items.get(slot).build()));
         } else {
-            animation.run(this);
+            animation.run(this, plugin);
         }
 
-        register();
+        register(plugin);
     }
 
     @EventHandler

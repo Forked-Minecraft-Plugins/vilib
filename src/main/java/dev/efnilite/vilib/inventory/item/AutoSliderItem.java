@@ -1,7 +1,6 @@
 package dev.efnilite.vilib.inventory.item;
 
 import com.google.common.annotations.Beta;
-import dev.efnilite.vilib.ViMain;
 import dev.efnilite.vilib.inventory.Menu;
 import dev.efnilite.vilib.inventory.MenuClickEvent;
 import dev.efnilite.vilib.util.Colls;
@@ -10,6 +9,7 @@ import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
@@ -31,6 +31,7 @@ public class AutoSliderItem extends MenuItem {
     private int current;
     private int cooldown;
     private final int slot;
+    private final Plugin plugin;
     private final Menu menu;
     private final Map<Integer, Item> items = new HashMap<>();
     private final Map<Integer, Consumer<MenuClickEvent>> clickFunctions = new HashMap<>();
@@ -40,9 +41,10 @@ public class AutoSliderItem extends MenuItem {
      *
      * @param menu The menu that this item will be displayed in.
      */
-    public AutoSliderItem(int slot, Menu menu) {
+    public AutoSliderItem(int slot, Menu menu, Plugin plugin) {
         this.slot = slot;
         this.menu = menu;
+        this.plugin = plugin;
     }
 
     /**
@@ -95,7 +97,7 @@ public class AutoSliderItem extends MenuItem {
 
     @Override
     public ItemStack build() {
-        if (items.keySet().size() == 0) {
+        if (items.keySet().isEmpty()) {
             throw new IllegalArgumentException("Items size is <0 or 0!");
         }
 
@@ -117,7 +119,7 @@ public class AutoSliderItem extends MenuItem {
                 }
             };
 
-            Task task = Task.create(ViMain.getPlugin()).delay(cooldown).repeat(cooldown).execute(runnable);
+            Task task = Task.create(plugin).delay(cooldown).repeat(cooldown).execute(runnable);
             task.run();
         }
 

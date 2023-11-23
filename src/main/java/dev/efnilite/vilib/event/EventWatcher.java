@@ -1,8 +1,9 @@
 package dev.efnilite.vilib.event;
 
-import dev.efnilite.vilib.ViMain;
+import org.bukkit.Bukkit;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
+import org.bukkit.plugin.Plugin;
 
 /**
  * Wrapper for Listener, adding useful methods.
@@ -21,7 +22,7 @@ public interface EventWatcher extends Listener {
     /**
      * Registers this listener
      */
-    default void register() {
-        ViMain.getPlugin().registerListener(this);
+    default void register(Plugin plugin) {
+        Bukkit.getPluginManager().registerEvents(this, plugin);
     }
 }
