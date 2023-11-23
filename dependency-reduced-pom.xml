@@ -32,16 +32,16 @@
                   <shadedPattern>dev.efnilite.vilib.bstats</shadedPattern>
                 </relocation>
                 <relocation>
-                  <pattern>com.tchristofferson</pattern>
+                  <pattern>com.tchristofferson.configupdater</pattern>
                   <shadedPattern>dev.efnilite.vilib.configupdater</shadedPattern>
                 </relocation>
                 <relocation>
-                  <pattern>fr.mrmicky</pattern>
+                  <pattern>fr.mrmicky.fastboard</pattern>
                   <shadedPattern>dev.efnilite.vilib.fastboard</shadedPattern>
                 </relocation>
                 <relocation>
                   <pattern>net.kyori</pattern>
-                  <shadedPattern>dev.efnilite.vilib.minimessage</shadedPattern>
+                  <shadedPattern>dev.efnilite.vilib.mm</shadedPattern>
                 </relocation>
               </relocations>
               <filters>
@@ -76,7 +76,7 @@
     <dependency>
       <groupId>org.spigotmc</groupId>
       <artifactId>spigot-api</artifactId>
-      <version>1.19-R0.1-SNAPSHOT</version>
+      <version>1.20.2-R0.1-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
