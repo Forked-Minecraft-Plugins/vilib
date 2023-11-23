@@ -6,12 +6,6 @@
   <version>2.0.0</version>
   <build>
     <defaultGoal>clean package</defaultGoal>
-    <resources>
-      <resource>
-        <filtering>true</filtering>
-        <directory>src/main/resources</directory>
-      </resource>
-    </resources>
     <plugins>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
@@ -35,19 +29,19 @@
               <relocations>
                 <relocation>
                   <pattern>org.bstats</pattern>
-                  <shadedPattern>dev.efnilite.vilib.lib.bstats</shadedPattern>
+                  <shadedPattern>dev.efnilite.vilib.bstats</shadedPattern>
                 </relocation>
                 <relocation>
                   <pattern>com.tchristofferson</pattern>
-                  <shadedPattern>dev.efnilite.vilib.lib.configupdater</shadedPattern>
+                  <shadedPattern>dev.efnilite.vilib.configupdater</shadedPattern>
                 </relocation>
                 <relocation>
                   <pattern>fr.mrmicky</pattern>
-                  <shadedPattern>dev.efnilite.vilib.lib.fastboard</shadedPattern>
+                  <shadedPattern>dev.efnilite.vilib.fastboard</shadedPattern>
                 </relocation>
                 <relocation>
                   <pattern>net.kyori</pattern>
-                  <shadedPattern>dev.efnilite.vilib.lib.minimessage</shadedPattern>
+                  <shadedPattern>dev.efnilite.vilib.minimessage</shadedPattern>
                 </relocation>
               </relocations>
               <filters>
