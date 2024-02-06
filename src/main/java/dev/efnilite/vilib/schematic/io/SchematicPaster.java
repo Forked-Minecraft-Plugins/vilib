@@ -86,7 +86,13 @@ public class SchematicPaster {
         try {
             Map<Block, BlockData> blocks = CompletableFuture.supplyAsync(blocksGetter).get();
 
-            blocks.forEach((block, data) -> block.setBlockData(data, false));
+            blocks.forEach((block, data) -> {
+                if (block == null || data == null) {
+                    return;
+                }
+
+                block.setBlockData(data, false);
+            });
 
             return new ArrayList<>(blocks.keySet());
         } catch (InterruptedException | ExecutionException ex) {
