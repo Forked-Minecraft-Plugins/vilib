@@ -4,8 +4,10 @@ import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
 public class Schematics {
@@ -34,5 +36,13 @@ public class Schematics {
 
     public static Schematic getSchematic(@NotNull Plugin plugin, @NotNull String schematicName) {
         return cache.get(plugin).get(schematicName);
+    }
+
+    public static Set<String> getSchematicNames(@NotNull Plugin plugin) {
+        return cache.get(plugin).keySet();
+    }
+
+    public static Collection<Schematic> getSchematics(@NotNull Plugin plugin) {
+        return cache.get(plugin).values();
     }
 }
