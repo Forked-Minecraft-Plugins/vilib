@@ -9,7 +9,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ExecutionException;
 
 public class Schematics {
 
@@ -19,23 +18,11 @@ public class Schematics {
         Map<String, Schematic> current = cache.getOrDefault(plugin, new HashMap<>());
 
         for (File file : files) {
-            Schematic schematic = Schematic.load(file, plugin);
-
-            if (!schematic.isSupported()) {
-                plugin.getLogger().warning("Schematic %s is not supported.".formatted(file.getName()));
-                continue;
-            }
-
-            current.put(file.getName(), schematic);
+            current.put(file.getName(), Schematic.load(file, plugin));
         }
 
         cache.put(plugin, current);
 
-        var unsupported = files.length - current.keySet().size();
-
-        if (unsupported > 0) {
-            plugin.getLogger().warning("Found %d unsupported schematic(s).".formatted(unsupported));
-        }
         plugin.getLogger().info("Loaded all schematics!");
     }
 

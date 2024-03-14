@@ -16,8 +16,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 
 import static java.lang.Math.max;
 import static java.lang.Math.min;
@@ -78,10 +76,10 @@ public class Schematic {
     }
 
     /**
-     * @return True when this schematic contains no unknown {@link BlockData}, false if it does.
+     * @return True when this schematic contains unknown {@link BlockData}, false if it does.
      */
-    public boolean isSupported() {
-        return !vectorBlockMap.containsValue(null);
+    public boolean hasUnknownMaterials() {
+        return vectorBlockMap.containsValue(null);
     }
 
     /**

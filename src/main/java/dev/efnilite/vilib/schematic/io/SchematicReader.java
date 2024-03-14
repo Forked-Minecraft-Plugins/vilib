@@ -41,7 +41,7 @@ public class SchematicReader {
 
                     }
 
-                    plugin.getLogger().warning("Invalid block data: %s".formatted(ov));
+                    plugin.getLogger().warning("Unknown block data %s in %s".formatted(ov, file.getName()));
 
                     return null;
                 }
