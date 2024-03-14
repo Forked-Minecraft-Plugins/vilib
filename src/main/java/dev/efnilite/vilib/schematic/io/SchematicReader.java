@@ -3,6 +3,7 @@ package dev.efnilite.vilib.schematic.io;
 import dev.efnilite.vilib.util.Colls;
 import org.bukkit.Bukkit;
 import org.bukkit.block.data.BlockData;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.util.Vector;
 
 import java.io.*;
@@ -21,7 +22,7 @@ public class SchematicReader {
      * @return A new {@link dev.efnilite.vilib.schematic.Schematic} instance based on the read blocks.
      */
     @SuppressWarnings("unchecked")
-    public Map<Vector, BlockData> read(File file) throws IOException, ClassNotFoundException {
+    public Map<Vector, BlockData> read(File file, Plugin plugin) throws IOException, ClassNotFoundException {
         try (ObjectInputStream stream = new ObjectInputStream(new BufferedInputStream(new FileInputStream(file)))) {
             var version = (int) stream.readObject();
             var palette = (Map<String, Integer>) stream.readObject();
@@ -36,9 +37,11 @@ public class SchematicReader {
                         if (ov.contains("leaves")) {
                             return Bukkit.createBlockData(ov.replaceAll(",?waterlogged=(false|true)", ""));
                         }
-                    } catch (IllegalArgumentException ex2) {
-                        return null;
+                    } catch (IllegalArgumentException ignored) {
+
                     }
+
+                    plugin.getLogger().warning("Invalid block data: %s".formatted(ov));
 
                     return null;
                 }

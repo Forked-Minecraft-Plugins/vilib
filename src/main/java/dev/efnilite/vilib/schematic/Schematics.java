@@ -16,10 +16,10 @@ public class Schematics {
         Map<String, Schematic> current = cache.getOrDefault(plugin, new HashMap<>());
 
         for (File file : files) {
-            Schematic schematic = Schematic.create().load(file);
+            Schematic schematic = Schematic.load(file, plugin);
 
             if (!schematic.isSupported()) {
-                plugin.getLogger().info("Schematic %s is not supported.".formatted(file.getName()));
+                plugin.getLogger().warning("Schematic %s is not supported.".formatted(file.getName()));
                 continue;
             }
 
@@ -28,12 +28,11 @@ public class Schematics {
 
         cache.put(plugin, current);
 
-        plugin.getLogger().info("Found %d unsupported schematic(s).".formatted(files.length - current.keySet().size()));
+        plugin.getLogger().warning("Found %d unsupported schematic(s).".formatted(files.length - current.keySet().size()));
         plugin.getLogger().info("Loaded all schematics!");
     }
 
     public static Schematic getSchematic(@NotNull Plugin plugin, @NotNull String schematicName) {
         return cache.get(plugin).get(schematicName);
     }
-
 }

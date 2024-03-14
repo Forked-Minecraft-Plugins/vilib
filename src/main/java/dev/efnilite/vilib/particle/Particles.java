@@ -199,10 +199,10 @@ public class Particles {
      * @param radius   The radius of the circle
      * @param amount   The amount of particles
      */
-    public static <T> void circle(Location location, ParticleData<T> data, int radius, int amount) {
+    public static <T> void circle(Location location, ParticleData<T> data, double radius, double amount) {
         World world = location.getWorld();
         if (world == null) {
-            throw new NullPointerException("World is null (Particles#circle)");
+            throw new NullPointerException("World is null");
         }
 
         double increment = (2 * Math.PI) / amount; // calc degree per amount, 2 x pi x r = circumference
@@ -216,7 +216,7 @@ public class Particles {
         }
     }
 
-    public static <T> void circle(Location location, ParticleData<T> data, @NotNull Player player, int radius, int amount) {
+    public static <T> void circle(Location location, ParticleData<T> data, @NotNull Player player, double radius, double amount) {
         double increment = (2 * Math.PI) / amount; // calc degree per amount, 2 x pi x r = circumference
         double y = location.getY();
 

@@ -34,32 +34,29 @@ public class Schematic {
      * The version of this library instance.
      */
     public static final int VERSION = 1;
-
-    /**
-     * @return A new schematic builder.
-     */
-    public static Builder create() {
-        return new Builder();
-    }
-
     private final File file;
     private final Map<Vector, BlockData> vectorBlockMap;
-
     /**
      * Constructor.
      *
      * @param file The file.
      */
-    public Schematic(@NotNull File file) throws ExecutionException, InterruptedException {
+    public Schematic(@NotNull File file, @NotNull Plugin plugin) throws ExecutionException, InterruptedException {
         this.file = file;
 
-        this.vectorBlockMap = CompletableFuture.supplyAsync(() -> {
-            try {
-                return new SchematicReader().read(file);
-            } catch (IOException | ClassNotFoundException ex) {
-                throw new RuntimeException(ex);
-            }
-        }).get();
+        var future = new CompletableFuture<Map<Vector, BlockData>>();
+
+        Task.create(plugin)
+                .async()
+                .execute(() -> {
+                    try {
+                        future.complete(new SchematicReader().read(file, plugin));
+                    } catch (IOException | ClassNotFoundException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                });
+
+        this.vectorBlockMap = future.get();
     }
 
     /**
@@ -114,48 +111,45 @@ public class Schematic {
         return file;
     }
 
-    public static class Builder {
+    /**
+     * Loads a schematic asynchronously.
+     *
+     * @param file The file.
+     * @return A new {@link Schematic} instance.
+     */
+    public static Schematic load(File file, Plugin plugin) throws ExecutionException, InterruptedException {
+        return new Schematic(file, plugin);
+    }
 
-        /**
-         * Loads a schematic asynchronously.
-         *
-         * @param file The file.
-         * @return A new {@link Schematic} instance.
-         */
-        public Schematic load(File file) throws ExecutionException, InterruptedException {
-            return new Schematic(file);
-        }
+    /**
+     * Loads a schematic asynchronously.
+     *
+     * @param file The file.
+     * @return A new {@link Schematic} instance.
+     */
+    public static Schematic load(String file, Plugin plugin) throws ExecutionException, InterruptedException {
+        return new Schematic(new File(file), plugin);
+    }
 
-        /**
-         * Loads a schematic asynchronously.
-         *
-         * @param file The file.
-         * @return A new {@link Schematic} instance.
-         */
-        public Schematic load(String file) throws ExecutionException, InterruptedException {
-            return new Schematic(new File(file));
-        }
+    /**
+     * Saves the selection between the two locations asynchronously to file.
+     *
+     * @param file The file.
+     * @param pos1 The first position.
+     * @param pos2 The second position.
+     */
+    public static void save(String file, Location pos1, Location pos2, Plugin plugin) {
+        save(new File(file), pos1, pos2, plugin);
+    }
 
-        /**
-         * Saves the selection between the two locations asynchronously to file.
-         *
-         * @param file The file.
-         * @param pos1 The first position.
-         * @param pos2 The second position.
-         */
-        public void save(String file, Location pos1, Location pos2, Plugin plugin) {
-            save(new File(file), pos1, pos2, plugin);
-        }
-
-        /**
-         * Saves the selection between the two locations asynchronously to file.
-         *
-         * @param file The file.
-         * @param pos1 The first position.
-         * @param pos2 The second position.
-         */
-        public void save(File file, Location pos1, Location pos2, Plugin plugin) {
-            Task.create(plugin).async().execute(() -> new SchematicWriter().save(file, pos1, pos2, plugin)).run();
-        }
+    /**
+     * Saves the selection between the two locations asynchronously to file.
+     *
+     * @param file The file.
+     * @param pos1 The first position.
+     * @param pos2 The second position.
+     */
+    public static void save(File file, Location pos1, Location pos2, Plugin plugin) {
+        Task.create(plugin).async().execute(() -> new SchematicWriter().save(file, pos1, pos2, plugin)).run();
     }
 }
