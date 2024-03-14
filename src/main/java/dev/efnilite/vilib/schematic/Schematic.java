@@ -41,22 +41,9 @@ public class Schematic {
      *
      * @param file The file.
      */
-    public Schematic(@NotNull File file, @NotNull Plugin plugin) throws ExecutionException, InterruptedException {
+    public Schematic(@NotNull File file, @NotNull Plugin plugin) throws IOException, ClassNotFoundException {
         this.file = file;
-
-        var future = new CompletableFuture<Map<Vector, BlockData>>();
-
-        Task.create(plugin)
-                .async()
-                .execute(() -> {
-                    try {
-                        future.complete(new SchematicReader().read(file, plugin));
-                    } catch (IOException | ClassNotFoundException ex) {
-                        throw new RuntimeException(ex);
-                    }
-                });
-
-        this.vectorBlockMap = future.get();
+        this.vectorBlockMap = new SchematicReader().read(file, plugin);
     }
 
     /**
@@ -117,7 +104,7 @@ public class Schematic {
      * @param file The file.
      * @return A new {@link Schematic} instance.
      */
-    public static Schematic load(File file, Plugin plugin) throws ExecutionException, InterruptedException {
+    public static Schematic load(File file, Plugin plugin) throws IOException, ClassNotFoundException {
         return new Schematic(file, plugin);
     }
 
@@ -127,7 +114,7 @@ public class Schematic {
      * @param file The file.
      * @return A new {@link Schematic} instance.
      */
-    public static Schematic load(String file, Plugin plugin) throws ExecutionException, InterruptedException {
+    public static Schematic load(String file, Plugin plugin) throws IOException, ClassNotFoundException {
         return new Schematic(new File(file), plugin);
     }
 

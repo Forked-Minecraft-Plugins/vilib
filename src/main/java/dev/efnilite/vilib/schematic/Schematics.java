@@ -4,6 +4,7 @@ import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -14,7 +15,7 @@ public class Schematics {
 
     private static final Map<Plugin, Map<String, Schematic>> cache = new HashMap<>();
 
-    public static void addFromFiles(@NotNull Plugin plugin, @NotNull File... files) throws ExecutionException, InterruptedException {
+    public static void addFromFiles(@NotNull Plugin plugin, @NotNull File... files) throws IOException, ClassNotFoundException {
         Map<String, Schematic> current = cache.getOrDefault(plugin, new HashMap<>());
 
         for (File file : files) {
