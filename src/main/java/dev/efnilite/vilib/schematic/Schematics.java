@@ -31,7 +31,11 @@ public class Schematics {
 
         cache.put(plugin, current);
 
-        plugin.getLogger().warning("Found %d unsupported schematic(s).".formatted(files.length - current.keySet().size()));
+        var unsupported = files.length - current.keySet().size();
+
+        if (unsupported > 0) {
+            plugin.getLogger().warning("Found %d unsupported schematic(s).".formatted(unsupported));
+        }
         plugin.getLogger().info("Loaded all schematics!");
     }
 
