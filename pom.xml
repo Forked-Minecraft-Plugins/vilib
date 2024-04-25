@@ -97,7 +97,7 @@
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.20.4-R0.1-SNAPSHOT</version>
+            <version>1.20.5-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
 
@@ -109,9 +109,9 @@
         </dependency>
 
         <dependency>
-            <groupId>com.github.blubbarbs</groupId>
+            <groupId>com.github.syldium</groupId>
             <artifactId>FastBoard</artifactId>
-            <version>04c2b09b69</version>
+            <version>cf01a3dfae</version>
             <scope>compile</scope>
         </dependency>
 
