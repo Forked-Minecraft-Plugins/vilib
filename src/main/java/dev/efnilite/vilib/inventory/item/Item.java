@@ -83,7 +83,7 @@ public class Item extends MenuItem {
         }
 
         if (glowing) {
-            meta.addEnchant(Enchantment.UNBREAKING, 1, false);
+            meta.addEnchant(Enchantment.EFFICIENCY, 1, false);
             meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
         } else {
             for (Enchantment enchantment : enchantments.keySet()) {
