@@ -61,9 +61,15 @@ public enum Version {
         var major = Integer.parseInt(parts[1]);
         var minor = Integer.parseInt(parts[2]);
 
-        VERSION = Arrays.stream(values()).filter(version -> version.major >= major && version.minor >= minor)
-                .findFirst()
-                .orElseThrow();
+        var lowerVersions = Arrays.stream(Version.values()).filter(version -> {
+            if (version.major == major) {
+                return version.minor <= minor;
+            } else {
+                return version.major < major;
+            }
+        }).toList();
+
+        VERSION = lowerVersions.get(lowerVersions.size() - 1);
 
         return VERSION;
     }
