@@ -2,6 +2,8 @@ package dev.efnilite.vilib.util;
 
 import org.bukkit.Bukkit;
 
+import java.util.Arrays;
+
 /**
  * Version class, useful for checking whether certain features on legacy can be executed.
  *
@@ -56,7 +58,13 @@ public enum Version {
      */
     public static Version getVersion() {
         var parts = getPrettyVersion().split("\\.");
-        VERSION = valueOf(parts[0] + "_" + parts[1]);
+        var major = Integer.parseInt(parts[0]);
+        var minor = Integer.parseInt(parts[1]);
+
+        VERSION = Arrays.stream(values()).filter(version -> version.major >= major && version.minor >= minor)
+                .findFirst()
+                .orElseThrow();
+
         return VERSION;
     }
 
