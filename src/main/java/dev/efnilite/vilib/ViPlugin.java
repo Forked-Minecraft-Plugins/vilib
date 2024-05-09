@@ -70,7 +70,12 @@ public abstract class ViPlugin extends JavaPlugin {
      * @param command The command class
      */
     public void registerCommand(String name, ViCommand command) {
-        ViCommand.register(name, command);
+        var cmd = getCommand(name);
+
+        if (cmd == null) return;
+
+        cmd.setExecutor(command);
+        cmd.setTabCompleter(command);
     }
 
     /**

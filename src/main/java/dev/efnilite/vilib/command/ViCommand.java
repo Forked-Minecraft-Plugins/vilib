@@ -1,15 +1,9 @@
 package dev.efnilite.vilib.command;
 
-import dev.efnilite.vilib.util.Version;
-import org.bukkit.Bukkit;
 import org.bukkit.command.*;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.*;
 
 /**
@@ -18,112 +12,6 @@ import java.util.*;
  * @author Efnilite
  */
 public abstract class ViCommand implements CommandExecutor, TabCompleter {
-
-    private static Method SYNC_COMMANDS;
-
-    static {
-        try {
-            SYNC_COMMANDS = getCBClass().getMethod("syncCommands");
-        } catch (Exception ignored) {
-
-        }
-    }
-
-    /**
-     * Retrieves the current command map instance
-     *
-     * @return the command map instance
-     */
-    public static @Nullable SimpleCommandMap retrieveMap() {
-        try {
-            Field field = Bukkit.getServer().getClass().getDeclaredField("commandMap");
-            field.setAccessible(true);
-            return (SimpleCommandMap) field.get(Bukkit.getServer());
-        } catch (NoSuchFieldException | IllegalAccessException ex) {
-            return null;
-        }
-    }
-
-    /**
-     * Adds a command to the Command Map
-     *
-     * @param alias   The alias
-     * @param command The command instance
-     * @return the command that was added
-     */
-    @SuppressWarnings("unchecked")
-    public static Command add(@NotNull String alias, @NotNull Command command) {
-        try {
-            Field field = SimpleCommandMap.class.getDeclaredField("knownCommands");
-            field.setAccessible(true);
-
-            CommandMap map = retrieveMap();
-
-            Map<String, Command> knownCommands = (Map<String, Command>) field.get(map);
-
-            field.set(map, knownCommands);
-
-            return knownCommands.put(alias, command);
-        } catch (NoSuchFieldException | IllegalAccessException ex) {
-            return null;
-        }
-    }
-
-    /**
-     * Unregister a command from the map.
-     *
-     * @param command The command
-     */
-    public static void unregister(@NotNull Command command) {
-        CommandMap map = retrieveMap();
-
-        if (map != null) {
-            command.unregister(map);
-        }
-    }
-
-    /**
-     * Syncs all commands to all players
-     */
-    public static void sync() {
-        if (SYNC_COMMANDS == null) {
-            return;
-        }
-
-        try {
-            SYNC_COMMANDS.invoke(Bukkit.getServer());
-        } catch (IllegalAccessException | InvocationTargetException ex) {
-            throw new RuntimeException(ex);
-        }
-    }
-
-    /**
-     * Registers a command under plugin.yml
-     *
-     * @param name    The name of this command in plugin.yml
-     * @param wrapper The command that's going to be registered
-     */
-    public static void register(String name, ViCommand wrapper) {
-        PluginCommand command = Bukkit.getPluginCommand(name);
-
-        if (command == null) {
-            return;
-        }
-
-        command.setExecutor(wrapper);
-        command.setTabCompleter(wrapper);
-
-        // add command to internal register
-        add(name, command);
-    }
-
-    private static Class<?> getCBClass() {
-        try {
-            return Class.forName("org.bukkit.craftbukkit.%s.CraftServer".formatted(Version.getInternalVersion()));
-        } catch (ClassNotFoundException ex) {
-            throw new RuntimeException("Couldn't find CraftBukkit class " + "CraftServer");
-        }
-    }
 
     /**
      * UUID-based cooldown system
