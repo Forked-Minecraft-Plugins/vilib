@@ -58,8 +58,8 @@ public enum Version {
      */
     public static Version getVersion() {
         var parts = getPrettyVersion().split("\\.");
-        var major = Integer.parseInt(parts[0]);
-        var minor = Integer.parseInt(parts[1]);
+        var major = Integer.parseInt(parts[1]);
+        var minor = Integer.parseInt(parts[2]);
 
         VERSION = Arrays.stream(values()).filter(version -> version.major >= major && version.minor >= minor)
                 .findFirst()
