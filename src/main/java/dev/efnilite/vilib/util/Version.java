@@ -59,7 +59,7 @@ public enum Version {
     public static Version getVersion() {
         var parts = getPrettyVersion().split("\\.");
         var major = Integer.parseInt(parts[1]);
-        var minor = Integer.parseInt(parts[2]);
+        var minor = parts.length == 3 ? Integer.parseInt(parts[2]) : 0;
 
         var lowerVersions = Arrays.stream(Version.values()).filter(version -> {
             if (version.major == major) {

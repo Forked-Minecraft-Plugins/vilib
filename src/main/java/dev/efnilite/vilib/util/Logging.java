@@ -69,7 +69,7 @@ public class Logging {
         error("##");
         error("## Version information:");
         error("##\tPlugin Version: %s".formatted(plugin.getDescription().getVersion()));
-        error("##\tMinecraft: %s".formatted(Version.getVersion().name().replaceAll("_", ".")));
+        error("##\tMinecraft: %s".formatted(Version.getVersion()));
         error("##");
     }
 }
