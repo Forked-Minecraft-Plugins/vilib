@@ -65,7 +65,6 @@ public class PagedMenu extends Menu {
     }
 
     public void page(int delta) {
-        System.out.printf("page delta %s%n", delta);
         int newPage = current + delta;
         if (newPage < 0 || newPage > total) {
             return;

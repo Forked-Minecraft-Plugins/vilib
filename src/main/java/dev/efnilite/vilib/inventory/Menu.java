@@ -168,6 +168,7 @@ public class Menu implements EventWatcher {
             throw new IllegalArgumentException("Invalid inventory type");
         }
 
+        inventory.clear();
         items.forEach((slot, item) -> inventory.setItem(slot, item.build()));
     }
 
@@ -279,7 +280,6 @@ public class Menu implements EventWatcher {
         if (clickedItem == null) {
             return;
         }
-        System.out.println("handle click");
 
         event.setCancelled(!clickedItem.isMovable());
 
@@ -291,7 +291,6 @@ public class Menu implements EventWatcher {
         if (deactivated) {
             return;
         }
-        System.out.println("closed");
 
         UUID viewerId = event.getPlayer().getUniqueId();
         UUID id = openMenus.get(viewerId);
