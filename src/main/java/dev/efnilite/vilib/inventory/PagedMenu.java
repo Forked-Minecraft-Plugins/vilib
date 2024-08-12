@@ -65,6 +65,7 @@ public class PagedMenu extends Menu {
     }
 
     public void page(int delta) {
+        System.out.printf("page delta %s%n", delta);
         int newPage = current + delta;
         if (newPage < 0 || newPage > total) {
             return;
@@ -93,7 +94,7 @@ public class PagedMenu extends Menu {
         for (int slot : displaySlots) {
             items.remove(slot);
 
-            if (values.size() > 0) {
+            if (!values.isEmpty()) {
                 items.put(slot, values.get(0));
                 values.remove(0);
             } else if (filler != null) {
@@ -111,9 +112,9 @@ public class PagedMenu extends Menu {
         List<MenuItem> thisPage = new ArrayList<>();
 
         int page = 0;
-        while (total.size() > 0) {
+        while (!total.isEmpty()) {
             for (int slot = 0; slot < displaySlots.size(); slot++) {
-                if (total.size() == 0) {
+                if (total.isEmpty()) {
                     break;
                 }
                 thisPage.add(total.get(0));

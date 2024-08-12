@@ -1,7 +1,6 @@
 package dev.efnilite.vilib.inventory;
 
 import dev.efnilite.vilib.event.EventWatcher;
-import dev.efnilite.vilib.inventory.animation.MenuAnimation;
 import dev.efnilite.vilib.inventory.item.Item;
 import dev.efnilite.vilib.inventory.item.MenuItem;
 import dev.efnilite.vilib.util.Numbers;
@@ -14,7 +13,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
@@ -57,7 +55,6 @@ public class Menu implements EventWatcher {
     protected UUID inventoryId;
     protected Player player;
     protected Material filler = null;
-    protected MenuAnimation animation = null;
 
     public Menu(int rows, String name) {
         if (rows < 1 || rows > 6) {
@@ -145,18 +142,6 @@ public class Menu implements EventWatcher {
     }
 
     /**
-     * Creates an animation on opening
-     *
-     * @param animation The animation
-     * @return the instance of this class
-     */
-    public Menu animation(@NotNull MenuAnimation animation) {
-        this.animation = animation;
-        this.animation.init(rows);
-        return this;
-    }
-
-    /**
      * Updates a specific item
      *
      * @param slots The slots which are to be updated
@@ -183,7 +168,7 @@ public class Menu implements EventWatcher {
             throw new IllegalArgumentException("Invalid inventory type");
         }
 
-        items.keySet().forEach(slot -> inventory.setItem(slot, items.get(slot).build()));
+        items.forEach((slot, item) -> inventory.setItem(slot, item.build()));
     }
 
     /**
@@ -274,13 +259,7 @@ public class Menu implements EventWatcher {
         player.openInventory(inventory);
         openMenus.put(player.getUniqueId(), inventoryId);
 
-        // Set items
-        if (animation == null) {
-            // no animation means just setting it normally
-            items.keySet().forEach(slot -> inventory.setItem(slot, items.get(slot).build()));
-        } else {
-            animation.run(this, plugin);
-        }
+        items.forEach((slot, item) -> inventory.setItem(slot, item.build()));
 
         register(plugin);
     }
@@ -300,6 +279,7 @@ public class Menu implements EventWatcher {
         if (clickedItem == null) {
             return;
         }
+        System.out.println("handle click");
 
         event.setCancelled(!clickedItem.isMovable());
 
@@ -311,15 +291,12 @@ public class Menu implements EventWatcher {
         if (deactivated) {
             return;
         }
+        System.out.println("closed");
 
         UUID viewerId = event.getPlayer().getUniqueId();
         UUID id = openMenus.get(viewerId);
         if (id != inventoryId) {
             return;
-        }
-
-        if (animation != null) {
-            animation.stop();
         }
 
         deactivated = true;
