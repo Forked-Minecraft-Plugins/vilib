@@ -95,7 +95,7 @@ public class Item extends MenuItem {
         meta.setLore(Strings.colour(lore));
         meta.setCustomModelData(modelId);
 
-        meta.setAttributeModifiers(attributes);
+        attributes.forEach(meta::addAttributeModifier);
 
         ((Damageable) meta).setDamage(Math.abs(durability - material.getMaxDurability()));
         meta.setUnbreakable(unbreakable);
